@@ -89,7 +89,7 @@ const availableProducts = await db
           min: 190,
           max: 490,
           dec: 0,
-        }),
+        })
       ),
       restaurantId: restaurant.id,
       description: faker.commerce.productDescription(),
@@ -101,7 +101,7 @@ const availableProducts = await db
           min: 190,
           max: 490,
           dec: 0,
-        }),
+        })
       ),
       restaurantId: restaurant.id,
       description: faker.commerce.productDescription(),
@@ -113,7 +113,7 @@ const availableProducts = await db
           min: 190,
           max: 490,
           dec: 0,
-        }),
+        })
       ),
       restaurantId: restaurant.id,
       description: faker.commerce.productDescription(),
@@ -125,7 +125,7 @@ const availableProducts = await db
           min: 190,
           max: 490,
           dec: 0,
-        }),
+        })
       ),
       restaurantId: restaurant.id,
       description: faker.commerce.productDescription(),
@@ -137,7 +137,7 @@ const availableProducts = await db
           min: 190,
           max: 490,
           dec: 0,
-        }),
+        })
       ),
       restaurantId: restaurant.id,
       description: faker.commerce.productDescription(),
@@ -149,7 +149,7 @@ const availableProducts = await db
           min: 190,
           max: 490,
           dec: 0,
-        }),
+        })
       ),
       restaurantId: restaurant.id,
       description: faker.commerce.productDescription(),
@@ -161,7 +161,7 @@ const availableProducts = await db
           min: 190,
           max: 490,
           dec: 0,
-        }),
+        })
       ),
       restaurantId: restaurant.id,
       description: faker.commerce.productDescription(),
@@ -173,7 +173,7 @@ const availableProducts = await db
           min: 190,
           max: 490,
           dec: 0,
-        }),
+        })
       ),
       restaurantId: restaurant.id,
       description: faker.commerce.productDescription(),
@@ -185,7 +185,7 @@ const availableProducts = await db
           min: 190,
           max: 490,
           dec: 0,
-        }),
+        })
       ),
       restaurantId: restaurant.id,
       description: faker.commerce.productDescription(),
