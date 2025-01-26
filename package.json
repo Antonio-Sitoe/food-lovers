@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "studio": "drizzle-kit studio"
+    "studio": "npx drizzle-kit studio",
+    "generate": "npx drizzle-kit generate",
+    "migrate": "npx drizzle-kit migrate",
+    "seed": "npx src/db/seed.ts"
   },
   "dependencies": {
     "@faker-js/faker": "^9.4.0",
