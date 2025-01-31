@@ -1,5 +1,5 @@
 import { createId } from '@paralleldrive/cuid2'
-import { pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { pgTable, text, timestamp, boolean } from 'drizzle-orm/pg-core' // Added boolean import
 import { relations } from 'drizzle-orm'
 import { products } from './products'
 
@@ -11,6 +11,7 @@ export const categories = pgTable('categories', {
   description: text('description'),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
+  isDeleted: boolean('is_deleted').default(false).notNull(),
 })
 
 export const categoriesRelations = relations(categories, ({ many }) => ({

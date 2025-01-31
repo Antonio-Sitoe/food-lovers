@@ -1,5 +1,6 @@
 import { list_all_categories } from '@/db/queries'
 import { API_RESPONSE } from '@/utils/api-response'
+import { DrizzleError } from 'drizzle-orm'
 
 export const get_all_categories = async (request: Request) => {
   try {
@@ -10,16 +11,23 @@ export const get_all_categories = async (request: Request) => {
     const offset = (page - 1) * limit
 
     const { count, data } = await list_all_categories({ limit, offset, search })
+
     return API_RESPONSE({
       data,
       pagination: {
         total: count,
-        page, // Página atual
-        limit, // Registros por página
-        totalPages: Math.ceil(count / limit), // Total de páginas
+        page,
+        limit,
+        totalPages: Math.ceil(count / limit),
       },
     })
   } catch (error) {
+    if (error instanceof DrizzleError) {
+      return API_RESPONSE(
+        { error: 'Falha na conexao com a base de dados' },
+        500
+      )
+    }
     return API_RESPONSE({ error: error }, 500)
   }
 }

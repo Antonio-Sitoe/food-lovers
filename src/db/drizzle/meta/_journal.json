@@ -15,6 +15,13 @@
       "when": 1737899084544,
       "tag": "0001_gorgeous_mother_askani",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1738355612317,
+      "tag": "0002_square_rogue",
+      "breakpoints": true
     }
   ]
 }

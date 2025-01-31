@@ -3,3 +3,9 @@ export interface GetParams {
   offset?: number
   search?: string
 }
+
+export interface GetNextApiResponseParams {
+  params: Promise<{
+    id: string
+  }>
+}

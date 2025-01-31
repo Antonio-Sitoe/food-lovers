@@ -1,16 +1,12 @@
 import { save_category, search_category_by_name } from '@/db/queries'
 import { API_RESPONSE } from '@/utils/api-response'
-import { z, ZodError } from 'zod'
-
-const schema = z.object({
-  name: z.string({ message: 'Digite o nome' }),
-  description: z.string().optional(),
-})
+import { category_schema } from '@/utils/validations/create-category'
+import { ZodError } from 'zod'
 
 export async function create_category(request: Request) {
   const category = await request.json()
   try {
-    const { name, description } = schema.parse(category)
+    const { name, description } = category_schema.parse(category)
 
     const hasCategory = await search_category_by_name(name)
 
