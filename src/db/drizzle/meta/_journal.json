@@ -22,6 +22,34 @@
       "when": 1738355612317,
       "tag": "0002_square_rogue",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1739047420995,
+      "tag": "0003_futuristic_darkstar",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1739389815308,
+      "tag": "0004_flashy_warbird",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1739390051495,
+      "tag": "0005_boring_rick_jones",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1739390633979,
+      "tag": "0006_little_morlun",
+      "breakpoints": true
     }
   ]
 }
