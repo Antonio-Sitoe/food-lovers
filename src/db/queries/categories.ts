@@ -1,6 +1,6 @@
 import { GetParams } from '@/@types/params'
 import { db } from '../connection'
-import { categories, INewCategory } from '../schema'
+import { categories, INewCategory, products } from '../schema'
 import { z } from 'zod'
 import { category_schema } from '@/utils/validations/create-category'
 import { eq } from 'drizzle-orm'
@@ -64,10 +64,18 @@ export async function update_category_on_db(
 }
 
 export async function delete_category_by_id(id: string) {
-  await db
-    .update(categories)
-    .set({
-      isDeleted: true,
-    })
-    .where(eq(categories.id, id))
+  await db.transaction(async (trx) => {
+    await trx
+      .update(categories)
+      .set({
+        isDeleted: true,
+      })
+      .where(eq(categories.id, id))
+    await trx
+      .update(products)
+      .set({
+        isDeleted: true,
+      })
+      .where(eq(products.categoryId, id))
+  })
 }
