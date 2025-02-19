@@ -11,6 +11,7 @@ export const products = pgTable('products', {
   name: text('name').unique().notNull(),
   description: text('description'),
   price: integer('price').notNull(),
+  imageUrl: text('image_url').default(''),
   categoryId: text('category_id'),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),

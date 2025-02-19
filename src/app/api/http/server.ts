@@ -13,7 +13,7 @@ import { getEvaluations } from './routes/get-evaluations'
 import { updateMenu } from './routes/update-menu'
 import { updateProfile } from './routes/update-profile'
 import { authentication } from './authentication'
-import { getProfile } from './routes/get-profile'
+import { getProfile } from '../v1/users/me/route'
 import { authenticateFromLink } from './routes/authenticate-from-link'
 import { getManagedRestaurant } from './routes/get-managed-restaurant'
 import { signOut } from './routes/sign-out'
@@ -42,7 +42,7 @@ const app = new Elysia()
 
         return true
       },
-    }),
+    })
   )
   .use(authentication)
   .use(signOut)
@@ -90,5 +90,5 @@ const app = new Elysia()
 app.listen(3333)
 
 console.log(
-  `🔥 HTTP server running at ${app.server?.hostname}:${app.server?.port}`,
+  `🔥 HTTP server running at ${app.server?.hostname}:${app.server?.port}`
 )

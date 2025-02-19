@@ -31,7 +31,7 @@ export async function create_products(req: Request) {
     }
 
     if ((error as PostgresError)?.code === '23505') {
-      return API_RESPONSE({ error: 'Product name must be unique' }, 400)
+      return API_RESPONSE({ error: 'Ja existe um produto com esse nome' }, 400)
     }
 
     return API_RESPONSE({ error: (error as Error)?.message || error }, 500)
