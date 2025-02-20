@@ -72,3 +72,27 @@ export async function list_all_users({
     count,
   }
 }
+
+export async function getUserById({ id }: { id: string }) {
+  const user = await db.query.users.findFirst({
+    where: (users, { eq, and }) =>
+      and(eq(users.id, id), eq(users.isDeleted, false)),
+    columns: {
+      id: true,
+      email: true,
+      name: true,
+      role: true,
+      phone: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  })
+  return user
+}
+
+export async function updateUser(
+  id: string,
+  { email, updatedAt, role, phone, password, name }: Partial<IUserType>
+) {
+  return db.update(users).set({})
+}

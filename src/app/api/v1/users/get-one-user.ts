@@ -1,23 +1,23 @@
 import { GetNextApiResponseParams } from '@/@types/params'
-import { get_product_by_id } from '@/db/queries'
+import { getUserById } from '@/db/queries'
 import { API_RESPONSE } from '@/utils/api-response'
 import { NextRequest } from 'next/server'
 
-export async function get_one_product(
+export async function get_one_user(
   _: NextRequest,
   replay: GetNextApiResponseParams
 ) {
   const id = (await replay.params).id
 
-  const product = await get_product_by_id({ id })
+  const User = await getUserById({ id })
 
-  if (!product) {
-    return API_RESPONSE('Product not found', 404)
+  if (!User) {
+    return API_RESPONSE('User not found', 404)
   }
 
   return API_RESPONSE(
     {
-      product,
+      user: User,
     },
     200
   )
