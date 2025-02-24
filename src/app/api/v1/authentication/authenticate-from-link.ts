@@ -1,6 +1,6 @@
 import Elysia, { t } from 'elysia'
 import dayjs from 'dayjs'
-import { authentication } from '../authentication'
+import { authentication } from './route'
 import { db } from '@/db/connection'
 import { authLinks } from '@/db/schema'
 import { eq } from 'drizzle-orm'
@@ -45,5 +45,5 @@ export const authenticateFromLink = new Elysia().use(authentication).get(
       code: t.String(),
       redirect: t.String(),
     }),
-  },
+  }
 )

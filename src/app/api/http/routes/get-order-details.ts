@@ -1,8 +1,8 @@
 import Elysia, { t } from 'elysia'
-import { authentication } from '../authentication'
+import { authentication } from '../../v1/authentication/route'
 import { db } from '@/db/connection'
-import { UnauthorizedError } from './errors/unauthorized-error'
-import { NotAManagerError } from './errors/not-a-manager-error'
+import { UnauthorizedError } from '../../v1/authentication/errors/unauthorized-error'
+import { NotAManagerError } from '../../v1/authentication/errors/not-a-manager-error'
 
 export const getOrderDetails = new Elysia().use(authentication).get(
   '/orders/:id',
@@ -47,7 +47,7 @@ export const getOrderDetails = new Elysia().use(authentication).get(
       where(fields, { eq, and }) {
         return and(
           eq(fields.id, orderId),
-          eq(fields.restaurantId, restaurantId),
+          eq(fields.restaurantId, restaurantId)
         )
       },
     })
@@ -62,5 +62,5 @@ export const getOrderDetails = new Elysia().use(authentication).get(
     params: t.Object({
       id: t.String(),
     }),
-  },
+  }
 )

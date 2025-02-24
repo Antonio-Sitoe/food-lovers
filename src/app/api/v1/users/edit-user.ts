@@ -1,19 +1,15 @@
 import { GetNextApiResponseParams } from '@/@types/params'
 import { findUserByEmail, findUserById, updateUser } from '@/db/queries'
 import { API_RESPONSE } from '@/utils/api-response'
-import { z, ZodError } from 'zod'
-import { user_schema } from '@/utils/validations/user-schema'
+import { ZodError } from 'zod'
 import { IUserType } from '@/db/schema'
 import bcrypt from 'bcryptjs'
 import { removeProperty } from '@/utils/remove-properties'
-
-const paramsSchema = z.object({
-  id: z.string({ required_error: 'id is required' }),
-})
-
-const only_role_schema = user_schema.pick({ role: true })
-
-const only_email_schema = user_schema.pick({ email: true })
+import { validate_id } from '@/utils/validations/validate-id'
+import {
+  only_email_schema,
+  only_role_schema,
+} from '@/utils/validations/user-schema'
 
 export async function edit_user(
   req: Request,
@@ -21,7 +17,7 @@ export async function edit_user(
 ) {
   try {
     const params = await replay.params
-    const { id } = paramsSchema.parse(params)
+    const { id } = validate_id.parse(params)
 
     const { email, name, password, phone, role } =
       (await req.json()) as IUserType
@@ -30,7 +26,7 @@ export async function edit_user(
 
     if (!userFounded) {
       return API_RESPONSE(
-        { error: 'Nenhum usuario com esse email foi encontrado' },
+        { error: 'Nenhum usuario com esse id foi encontrado' },
         404
       )
     }

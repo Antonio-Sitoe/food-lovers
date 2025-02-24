@@ -1,5 +1,5 @@
 import Elysia from 'elysia'
-import { authentication } from '../authentication'
+import { authentication } from '../../v1/authentication/route'
 import { and, count, eq, gte, sql } from 'drizzle-orm'
 import dayjs from 'dayjs'
 import { db } from '@/db/connection'
@@ -29,8 +29,8 @@ export const getDayOrdersAmount = new Elysia()
       .where(
         and(
           eq(orders.restaurantId, restaurantId),
-          gte(orders.createdAt, startOfYesterday.toDate()),
-        ),
+          gte(orders.createdAt, startOfYesterday.toDate())
+        )
       )
       .groupBy(sql`TO_CHAR(${orders.createdAt}, 'YYYY-MM-DD')`)
       .having(({ amount }) => gte(amount, 1))

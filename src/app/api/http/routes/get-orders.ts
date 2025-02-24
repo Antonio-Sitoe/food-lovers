@@ -3,7 +3,7 @@ import { orders, users } from '@/db/schema'
 import { db } from '@/db/connection'
 import { eq, and, ilike, desc, count, sql } from 'drizzle-orm'
 import { createSelectSchema } from 'drizzle-typebox'
-import { authentication } from '../authentication'
+import { authentication } from '../../v1/authentication/route'
 
 export const getOrders = new Elysia().use(authentication).get(
   '/orders',
@@ -32,8 +32,8 @@ export const getOrders = new Elysia().use(authentication).get(
           eq(orders.restaurantId, restaurantId),
           orderId ? ilike(orders.id, `%${orderId}%`) : undefined,
           status ? eq(orders.status, status) : undefined,
-          customerName ? ilike(users.name, `%${customerName}%`) : undefined,
-        ),
+          customerName ? ilike(users.name, `%${customerName}%`) : undefined
+        )
       )
 
     const [ordersCount] = await db
@@ -74,5 +74,5 @@ export const getOrders = new Elysia().use(authentication).get(
       status: t.Optional(createSelectSchema(orders).properties.status),
       pageIndex: t.Numeric({ minimum: 0 }),
     }),
-  },
+  }
 )

@@ -1,7 +1,7 @@
 import { db } from '@/db/connection'
 import Elysia, { t } from 'elysia'
 import { z } from 'zod'
-import { authentication } from '../authentication'
+import { authentication } from '../../v1/authentication/route'
 
 export const getEvaluations = new Elysia().use(authentication).get(
   '/evaluations',
@@ -32,5 +32,5 @@ export const getEvaluations = new Elysia().use(authentication).get(
     query: t.Object({
       pageIndex: t.Numeric({ minimum: 0 }),
     }),
-  },
+  }
 )

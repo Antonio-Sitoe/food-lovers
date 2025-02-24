@@ -1,9 +1,9 @@
 import Elysia, { t } from 'elysia'
-import { authentication } from '../authentication'
+import { authentication } from '../../v1/authentication/route'
 import { db } from '@/db/connection'
 import { orders } from '@/db/schema'
 import { eq } from 'drizzle-orm'
-import { UnauthorizedError } from './errors/unauthorized-error'
+import { UnauthorizedError } from '../../v1/authentication/errors/unauthorized-error'
 
 export const dispatchOrder = new Elysia().use(authentication).patch(
   '/orders/:id/dispatch',
@@ -15,7 +15,7 @@ export const dispatchOrder = new Elysia().use(authentication).patch(
       where(fields, { eq, and }) {
         return and(
           eq(fields.id, orderId),
-          eq(fields.restaurantId, restaurantId),
+          eq(fields.restaurantId, restaurantId)
         )
       },
     })
@@ -43,5 +43,5 @@ export const dispatchOrder = new Elysia().use(authentication).patch(
     params: t.Object({
       id: t.String(),
     }),
-  },
+  }
 )

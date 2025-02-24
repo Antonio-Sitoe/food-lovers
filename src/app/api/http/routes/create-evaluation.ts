@@ -1,5 +1,5 @@
 import Elysia, { t } from 'elysia'
-import { authentication } from '../authentication'
+import { authentication } from '../../v1/authentication/route'
 import { db } from '@/db/connection'
 import { evaluations } from '@/db/schema'
 
@@ -24,5 +24,5 @@ export const createEvaluation = new Elysia().use(authentication).post(
       rate: t.Integer({ minimum: 1, maximum: 5 }),
       comment: t.Optional(t.String()),
     }),
-  },
+  }
 )

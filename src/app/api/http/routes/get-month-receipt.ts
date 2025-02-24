@@ -1,5 +1,5 @@
 import Elysia from 'elysia'
-import { authentication } from '../authentication'
+import { authentication } from '../../v1/authentication/route'
 import { and, eq, gte, sql, sum } from 'drizzle-orm'
 import dayjs from 'dayjs'
 import { db } from '@/db/connection'
@@ -29,8 +29,8 @@ export const getMonthReceipt = new Elysia()
       .where(
         and(
           eq(orders.restaurantId, restaurantId),
-          gte(orders.createdAt, startOfLastMonth.toDate()),
-        ),
+          gte(orders.createdAt, startOfLastMonth.toDate())
+        )
       )
       .groupBy(sql`TO_CHAR(${orders.createdAt}, 'YYYY-MM')`)
       .having(({ receipt }) => gte(receipt, 1))

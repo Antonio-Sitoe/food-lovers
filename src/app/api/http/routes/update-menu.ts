@@ -1,5 +1,5 @@
 import Elysia, { Static, t } from 'elysia'
-import { authentication } from '../authentication'
+import { authentication } from '../../v1/authentication/route'
 import { db } from '@/db/connection'
 import { products } from '@/db/schema'
 import { and, eq, inArray } from 'drizzle-orm'
@@ -26,8 +26,8 @@ export const updateMenu = new Elysia().use(authentication).put(
         .where(
           and(
             inArray(products.id, deletedProductIds),
-            eq(products.restaurantId, restaurantId),
-          ),
+            eq(products.restaurantId, restaurantId)
+          )
         )
     }
 
@@ -38,7 +38,7 @@ export const updateMenu = new Elysia().use(authentication).put(
     const updatedProducts = newOrUpdatedProducts.filter(
       (product): product is ProductWithId => {
         return !!product.id
-      },
+      }
     )
 
     if (updatedProducts.length > 0) {
@@ -54,17 +54,17 @@ export const updateMenu = new Elysia().use(authentication).put(
             .where(
               and(
                 eq(products.id, product.id),
-                eq(products.restaurantId, restaurantId),
-              ),
+                eq(products.restaurantId, restaurantId)
+              )
             )
-        }),
+        })
       )
     }
 
     const newProducts = newOrUpdatedProducts.filter(
       (product): product is ProductWithoutId => {
         return !product.id
-      },
+      }
     )
 
     if (newProducts.length) {
@@ -76,7 +76,7 @@ export const updateMenu = new Elysia().use(authentication).put(
             priceInCents: product.price * 100,
             restaurantId,
           }
-        }),
+        })
       )
     }
 
@@ -89,5 +89,5 @@ export const updateMenu = new Elysia().use(authentication).put(
         deletedProductIds: t.Array(t.String()),
       }),
     }),
-  },
+  }
 )

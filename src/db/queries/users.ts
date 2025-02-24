@@ -100,7 +100,7 @@ export async function getUserById({ id }: { id: string }) {
 
 export async function updateUser(
   id: string,
-  { email, name, password, phone, role }: Partial<IUserType>
+  { email, name, password, phone, role, isDeleted }: Partial<IUserType>
 ) {
   const updateData: Partial<IUserType> = {}
   if (email !== undefined) updateData.email = email
@@ -108,6 +108,7 @@ export async function updateUser(
   if (password !== undefined) updateData.password = password
   if (phone !== undefined) updateData.phone = phone
   if (role !== undefined) updateData.role = role
+  if (isDeleted !== undefined) updateData.isDeleted = isDeleted
   updateData.updatedAt = new Date()
   return db.update(users).set(updateData).where(eq(users.id, id)).returning()
 }

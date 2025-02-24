@@ -1,9 +1,15 @@
-import Elysia, { Static, t } from 'elysia'
 import cookie from '@elysiajs/cookie'
 import jwt from '@elysiajs/jwt'
 import { env } from '@/env'
-import { UnauthorizedError } from './routes/errors/unauthorized-error'
-import { NotAManagerError } from './routes/errors/not-a-manager-error'
+
+import { z } from 'zod'
+
+import { NotAManagerError } from './errors/not-a-manager-error'
+import { NextRequest, NextResponse } from 'next/server'
+import { UnauthorizedError } from './errors/unauthorized-error'
+import { findUserByEmail } from '@/db/queries'
+import { compare } from 'bcryptjs'
+import { InvalidCredencialError } from './errors/invalid-credencials-error'
 
 const jwtPayloadSchema = t.Object({
   sub: t.String(),
@@ -30,7 +36,7 @@ export const authentication = new Elysia()
       name: 'jwt',
       secret: env.JWT_SECRET_KEY,
       schema: jwtPayloadSchema,
-    }),
+    })
   )
   .use(cookie())
   .derive(({ jwt, cookie, setCookie, removeCookie }) => {
@@ -69,3 +75,27 @@ export const authentication = new Elysia()
       },
     }
   })
+
+const login_schema = z.object({
+  email: z
+    .string({ required_error: 'Informe um email' })
+    .email({ message: 'Digite um email valido' }),
+  password: z.string({ required_error: 'Informe uma senha' }),
+})
+
+export const POST = async (req: Request) => {
+  const data = await req.json()
+  const { email, password } = login_schema.parse(data)
+
+  console.log('Logado com sucesso', { email, password })
+
+  const user = await findUserByEmail({ email })
+
+  if (!user) throw new InvalidCredencialError()
+
+  const does_password_matches = await compare(password, user.password)
+
+  if (!does_password_matches) throw new InvalidCredencialError()
+
+  return NextResponse.json({ message: 'Logado com sucesso' })
+}

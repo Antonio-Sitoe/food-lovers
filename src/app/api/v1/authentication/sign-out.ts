@@ -1,5 +1,5 @@
 import Elysia from 'elysia'
-import { authentication } from '../authentication'
+import { authentication } from '../../v1/authentication/route'
 
 export const signOut = new Elysia()
   .use(authentication)

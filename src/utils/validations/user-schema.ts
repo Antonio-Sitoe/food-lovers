@@ -14,3 +14,7 @@ export const user_schema = z.object({
     .string({ required_error: 'Adicione uma senha' })
     .min(4, 'A senha deve ter no maximo 4 caracteres'),
 })
+
+export const only_role_schema = user_schema.pick({ role: true })
+
+export const only_email_schema = user_schema.pick({ email: true })

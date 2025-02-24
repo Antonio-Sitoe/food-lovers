@@ -1,5 +1,5 @@
 import Elysia from 'elysia'
-import { authentication } from '../../../http/authentication'
+import { authentication } from '../../authentication/route'
 import { db } from '@/db/connection'
 
 export const getProfile = new Elysia()

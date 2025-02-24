@@ -1,7 +1,7 @@
 import { db } from '@/db/connection'
 import { orders } from '@/db/schema'
 import Elysia, { t } from 'elysia'
-import { authentication } from '../authentication'
+import { authentication } from '../../v1/authentication/route'
 import { orderItems } from '@/db/schema/order-items'
 
 export const createOrder = new Elysia().use(authentication).post(
@@ -17,7 +17,7 @@ export const createOrder = new Elysia().use(authentication).post(
       where(fields, { eq, and, inArray }) {
         return and(
           eq(fields.restaurantId, restaurantId),
-          inArray(fields.id, productsIds),
+          inArray(fields.id, productsIds)
         )
       },
     })
@@ -61,7 +61,7 @@ export const createOrder = new Elysia().use(authentication).post(
             priceInCents: orderProduct.unitPriceInCents,
             quantity: orderProduct.quantity,
           }
-        }),
+        })
       )
     })
 
@@ -73,11 +73,11 @@ export const createOrder = new Elysia().use(authentication).post(
         t.Object({
           productId: t.String(),
           quantity: t.Integer(),
-        }),
+        })
       ),
     }),
     params: t.Object({
       restaurantId: t.String(),
     }),
-  },
+  }
 )

@@ -1,5 +1,5 @@
 import Elysia, { t } from 'elysia'
-import { authentication } from '../authentication'
+import { authentication } from '../../v1/authentication/route'
 import { and, count, eq, gte, lte, sql, sum } from 'drizzle-orm'
 import dayjs from 'dayjs'
 import { db } from '@/db/connection'
@@ -38,13 +38,13 @@ export const getDailyReceiptInPeriod = new Elysia().use(authentication).get(
             startDate
               .startOf('day')
               .add(startDate.utcOffset(), 'minutes')
-              .toDate(),
+              .toDate()
           ),
           lte(
             orders.createdAt,
-            endDate.endOf('day').add(endDate.utcOffset(), 'minutes').toDate(),
-          ),
-        ),
+            endDate.endOf('day').add(endDate.utcOffset(), 'minutes').toDate()
+          )
+        )
       )
       .groupBy(sql`TO_CHAR(${orders.createdAt}, 'DD/MM')`)
       .having(({ receipt }) => gte(receipt, 1))
@@ -70,5 +70,5 @@ export const getDailyReceiptInPeriod = new Elysia().use(authentication).get(
       from: t.Optional(t.String()),
       to: t.Optional(t.String()),
     }),
-  },
+  }
 )
