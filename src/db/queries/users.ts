@@ -2,11 +2,19 @@ import { IUserType, users } from '../schema'
 import { db } from '../connection'
 import { GetParams } from '@/@types/params'
 import { ENUM_USER_ROLE } from '@/@types/enum-user-role'
+import { eq } from 'drizzle-orm'
 
 export async function findUserByEmail({ email }: Pick<IUserType, 'email'>) {
   return await db.query.users.findFirst({
     where: (user, { eq, and }) =>
       and(eq(user.email, email), eq(user.isDeleted, false)),
+  })
+}
+
+export async function findUserById({ id }: { id: string }) {
+  return await db.query.users.findFirst({
+    where: (user, { eq, and }) =>
+      and(eq(user.id, id), eq(user.isDeleted, false)),
   })
 }
 
@@ -92,7 +100,14 @@ export async function getUserById({ id }: { id: string }) {
 
 export async function updateUser(
   id: string,
-  { email, updatedAt, role, phone, password, name }: Partial<IUserType>
+  { email, name, password, phone, role }: Partial<IUserType>
 ) {
-  return db.update(users).set({})
+  const updateData: Partial<IUserType> = {}
+  if (email !== undefined) updateData.email = email
+  if (name !== undefined) updateData.name = name
+  if (password !== undefined) updateData.password = password
+  if (phone !== undefined) updateData.phone = phone
+  if (role !== undefined) updateData.role = role
+  updateData.updatedAt = new Date()
+  return db.update(users).set(updateData).where(eq(users.id, id)).returning()
 }
