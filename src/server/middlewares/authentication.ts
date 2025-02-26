@@ -1,54 +1,43 @@
-import cookie from '@elysiajs/cookie'
-import jwt from '@elysiajs/jwt'
-import { env } from '@/env'
-
 import { z } from 'zod'
 
-import { NotAManagerError } from '../routes/authentication/errors/not-a-manager-error'
+import { env } from '@/lib/env'
+import { Hono } from 'hono'
+import { jwt, sign } from 'hono/jwt'
+import { getCookie, setCookie, deleteCookie } from 'hono/cookie'
 
 import { UnauthorizedError } from '../routes/authentication/errors/unauthorized-error'
-import { Hono } from 'hono'
+import { HonoApp, jwtPayloadSchema } from '@/@types/Hono-types'
 
-const jwtPayloadSchema = t.Object({
-  sub: t.String(),
+export const authentication = new Hono<HonoApp>().use('*', async (c, next) => {
+  c.set('getCurrentUser', async () => {
+    const token = getCookie(c, 'auth')
+    if (!token) {
+      throw new UnauthorizedError()
+    }
+    const payload = await c.get('jwtPayload')
+    if (!payload) {
+      throw new UnauthorizedError()
+    }
+
+    return payload
+  })
+  c.set('signUser', async (payload: z.infer<typeof jwtPayloadSchema>) => {
+    const token = await sign(payload, env.JWT_SECRET_KEY)
+    console.log('token', token)
+    setCookie(c, 'auth', token, {
+      httpOnly: true,
+      maxAge: 7 * 86400, // 7 dias
+      path: '/',
+    })
+  })
+  c.set('signOut', () => {
+    deleteCookie(c, 'auth')
+  })
+  await next()
 })
 
-export const authentication = new Hono()
-  .onError((error, { json }) => {
-    if (error instanceof UnauthorizedError) {
-      return json({ message: error.message }, 401)
-    } else if (error instanceof NotAManagerError) {
-      return json({ message: error.message }, 401)
-    }
+export const jwtConfig = authentication.use(
+  jwt({
+    secret: env.JWT_SECRET_KEY,
   })
-  .use(
-    jwt({
-      name: 'jwt',
-      secret: env.JWT_SECRET_KEY,
-      schema: jwtPayloadSchema,
-    })
-  )
-  .use(cookie())
-  .derive(({ jwt, cookie, setCookie, removeCookie }) => {
-    return {
-      getCurrentUser: async () => {
-        const payload = await jwt.verify(cookie.auth)
-
-        if (!payload) {
-          throw new UnauthorizedError()
-        }
-
-        return payload
-      },
-      signUser: async (payload: Static<typeof jwtPayloadSchema>) => {
-        setCookie('auth', await jwt.sign(payload), {
-          httpOnly: true,
-          maxAge: 7 * 86400,
-          path: '/',
-        })
-      },
-      signOut: () => {
-        removeCookie('auth')
-      },
-    }
-  })
+)

@@ -4,6 +4,8 @@ import { compare } from 'bcryptjs'
 
 import { InvalidCredencialError } from './errors/invalid-credencials-error'
 import { z } from 'zod'
+import { HonoApp } from '@/@types/Hono-types'
+import { removeProperty } from '@/utils/remove-properties'
 
 const login_schema = z.object({
   email: z
@@ -12,17 +14,25 @@ const login_schema = z.object({
   password: z.string({ required_error: 'Informe uma senha' }),
 })
 
-export const login = new Hono().post('/sign-in', async ({ req, json }) => {
-  const data = await req.json()
-  const { email, password } = login_schema.parse(data)
+export const login = new Hono<HonoApp>().post(
+  '/sign-in',
+  async ({ req, json, get }) => {
+    const data = await req.json()
+    const { email, password } = login_schema.parse(data)
 
-  const user = await findUserByEmail({ email })
+    const user = await findUserByEmail({ email })
 
-  if (!user) throw new InvalidCredencialError()
+    if (!user) throw new InvalidCredencialError()
 
-  const does_password_matches = await compare(password, user.password)
+    const does_password_matches = await compare(password, user.password)
 
-  if (!does_password_matches) throw new InvalidCredencialError()
+    if (!does_password_matches) throw new InvalidCredencialError()
 
-  return json({ message: 'Logado com sucesso' })
-})
+    await get('signUser')({ sub: user.id })
+
+    return json({
+      message: 'Logado com sucesso',
+      user: removeProperty(user, ['isDeleted', 'password']),
+    })
+  }
+)

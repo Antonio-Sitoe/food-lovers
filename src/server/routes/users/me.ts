@@ -1,21 +1,24 @@
-import Elysia from 'elysia'
-import { authentication } from '../../middlewares/authentication'
 import { db } from '@/db/connection'
+import { Hono } from 'hono'
+import { HonoApp } from '@/@types/Hono-types'
 
-export const getProfile = new Elysia()
-  .use(authentication)
-  .get('/me', async ({ getCurrentUser }) => {
-    const { sub: userId } = await getCurrentUser()
+export const getProfile = new Hono<HonoApp>().get('/me', async ({ get }) => {
+  const getCurrentUser = get('getCurrentUser')
+  const { id } = await getCurrentUser()
 
-    const user = await db.query.users.findFirst({
-      where(fields, { eq }) {
-        return eq(fields.id, userId)
-      },
-    })
+  if (!id) {
+    throw new Error('User not found.')
+  }
 
-    if (!user) {
-      throw new Error('User not found.')
-    }
-
-    return user
+  const user = await db.query.users.findFirst({
+    where(fields, { eq }) {
+      return eq(fields.id, id)
+    },
   })
+
+  if (!user) {
+    throw new Error('User not found.')
+  }
+
+  return user
+})
