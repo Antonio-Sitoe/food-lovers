@@ -7,8 +7,6 @@ import { UnauthorizedError } from './routes/authentication/errors/unauthorized-e
 import { NotAManagerError } from './routes/authentication/errors/not-a-manager-error'
 import { ZodError } from 'zod'
 import { InvalidCredencialError } from './routes/authentication/errors/invalid-credencials-error'
-import { jwt } from 'hono/jwt'
-import { env } from '@/lib/env'
 
 export const app = new Hono().basePath('/api')
 
@@ -37,7 +35,6 @@ app
     } else if (error instanceof InvalidCredencialError) {
       return json({ error: error.message }, 401)
     }
-
     console.log('ss', error)
     return json({ error }, 500)
   })

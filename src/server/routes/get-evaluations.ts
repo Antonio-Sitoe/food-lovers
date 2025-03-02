@@ -1,4 +1,4 @@
-import { db } from '@/db/connection'
+import { db } from '@/server/db/connection'
 import Elysia, { t } from 'elysia'
 import { z } from 'zod'
 import { authentication } from '../middlewares/authentication'

@@ -2,8 +2,8 @@ import Elysia from 'elysia'
 import { authentication } from '../middlewares/authentication'
 import { and, eq, gte, sql, sum } from 'drizzle-orm'
 import dayjs from 'dayjs'
-import { db } from '@/db/connection'
-import { orders } from '@/db/schema'
+import { db } from '@/server/db/connection'
+import { orders } from '@/server/db/schema'
 
 export const getMonthReceipt = new Elysia()
   .use(authentication)

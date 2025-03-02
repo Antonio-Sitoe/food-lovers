@@ -1,4 +1,4 @@
-import { findUserByEmail, saveUser } from '@/db/queries'
+import { findUserByEmail, saveUser } from '@/server/db/queries'
 import { removeProperty } from '@/utils/remove-properties'
 import { user_schema } from '@/utils/validations/user-schema'
 import * as bCrypt from 'bcryptjs'

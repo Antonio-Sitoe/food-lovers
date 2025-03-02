@@ -1,4 +1,4 @@
-import { save_category, search_category_by_name } from '@/db/queries'
+import { save_category, search_category_by_name } from '@/server/db/queries'
 import { API_RESPONSE } from '@/utils/api-response'
 import { category_schema } from '@/utils/validations/create-category'
 import { ZodError } from 'zod'

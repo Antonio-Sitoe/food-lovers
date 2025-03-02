@@ -1,7 +1,7 @@
 import Elysia, { Static, t } from 'elysia'
 import { authentication } from '../middlewares/authentication'
-import { db } from '@/db/connection'
-import { products } from '@/db/schema'
+import { db } from '@/server/db/connection'
+import { products } from '@/server/db/schema'
 import { and, eq, inArray } from 'drizzle-orm'
 
 const productSchema = t.Object({

@@ -1,8 +1,8 @@
 import Elysia from 'elysia'
 import { authentication } from '../middlewares/authentication'
 import { and, count, eq } from 'drizzle-orm'
-import { db } from '@/db/connection'
-import { orderItems, orders, products } from '@/db/schema'
+import { db } from '@/server/db/connection'
+import { orderItems, orders, products } from '@/server/db/schema'
 
 export const getPopularProducts = new Elysia()
   .use(authentication)

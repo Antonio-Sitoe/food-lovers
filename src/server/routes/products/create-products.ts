@@ -1,11 +1,13 @@
-import { get_category_by_id, save_products } from '@/db/queries'
+import { get_category_by_id, save_products } from '@/server/db/queries'
 import { API_RESPONSE } from '@/utils/api-response'
 import { productsSchema } from '@/utils/validations/products'
 import { ZodError } from 'zod'
 import { CategoryNotExistError } from '../../errors/categoryNotExist'
 import { PostgresError } from '@/@types/postgress'
+import { Hono } from 'hono'
 
 export async function create_products(req: Request) {
+  const app = new Hono().post('/products')
   try {
     const data = await req.json()
 
@@ -36,4 +38,6 @@ export async function create_products(req: Request) {
 
     return API_RESPONSE({ error: (error as Error)?.message || error }, 500)
   }
+
+  return app
 }

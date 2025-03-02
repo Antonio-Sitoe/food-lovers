@@ -1,9 +1,9 @@
 import Elysia, { t } from 'elysia'
-import { authentication } from '../middlewares/authentication'
-import { db } from '@/db/connection'
-import { orders } from '@/db/schema'
+import { authentication } from '../../middlewares/authentication'
+import { db } from '@/server/db/connection'
+import { orders } from '@/server/db/schema'
 import { eq } from 'drizzle-orm'
-import { UnauthorizedError } from './authentication/errors/unauthorized-error'
+import { UnauthorizedError } from '../authentication/errors/unauthorized-error'
 
 export const approveOrder = new Elysia().use(authentication).patch(
   '/orders/:id/approve',

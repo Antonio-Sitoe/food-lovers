@@ -13,7 +13,6 @@
     "seed": "npx src/db/seed.ts"
   },
   "dependencies": {
-    "hono": "^4.7.2",
     "@faker-js/faker": "^9.4.0",
     "@paralleldrive/cuid2": "^2.2.2",
     "bcryptjs": "^3.0.2",
@@ -21,6 +20,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.38.4",
+    "hono": "^4.7.2",
     "lucide-react": "^0.474.0",
     "next": "15.1.0",
     "pg": "^8.13.1",

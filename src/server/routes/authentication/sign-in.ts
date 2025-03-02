@@ -1,4 +1,4 @@
-import { findUserByEmail } from '@/db/queries'
+import { findUserByEmail } from '@/server/db/queries'
 import { Hono } from 'hono'
 import { compare } from 'bcryptjs'
 

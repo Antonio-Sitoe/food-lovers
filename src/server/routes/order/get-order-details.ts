@@ -1,8 +1,8 @@
 import Elysia, { t } from 'elysia'
-import { authentication } from '../middlewares/authentication'
-import { db } from '@/db/connection'
-import { UnauthorizedError } from './authentication/errors/unauthorized-error'
-import { NotAManagerError } from './authentication/errors/not-a-manager-error'
+import { authentication } from '../../middlewares/authentication'
+import { db } from '@/server/db/connection'
+import { UnauthorizedError } from '../authentication/errors/unauthorized-error'
+import { NotAManagerError } from '../authentication/errors/not-a-manager-error'
 
 export const getOrderDetails = new Elysia().use(authentication).get(
   '/orders/:id',

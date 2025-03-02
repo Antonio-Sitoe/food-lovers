@@ -1,5 +1,5 @@
-import { users } from '@/db/schema'
-import { db } from '@/db/connection'
+import { users } from '@/server/db/schema'
+import { db } from '@/server/db/connection'
 import Elysia from 'elysia'
 import { z } from 'zod'
 
@@ -21,5 +21,5 @@ export const registerCustomer = new Elysia().post(
     })
 
     set.status = 401
-  },
+  }
 )

@@ -1,5 +1,5 @@
 import { GetNextApiResponseParams } from '@/@types/params'
-import { findUserById, updateUser } from '@/db/queries'
+import { findUserById, updateUser } from '@/server/db/queries'
 import { API_RESPONSE } from '@/utils/api-response'
 import { validate_id } from '@/utils/validations/validate-id'
 import { NextResponse } from 'next/server'

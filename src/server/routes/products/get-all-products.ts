@@ -1,4 +1,4 @@
-import { list_all_products } from '@/db/queries'
+import { list_all_products } from '@/server/db/queries'
 import { API_RESPONSE } from '@/utils/api-response'
 import { DrizzleError } from 'drizzle-orm'
 

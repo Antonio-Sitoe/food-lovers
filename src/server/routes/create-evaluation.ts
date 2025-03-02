@@ -1,7 +1,7 @@
 import Elysia, { t } from 'elysia'
 import { authentication } from '../middlewares/authentication'
-import { db } from '@/db/connection'
-import { evaluations } from '@/db/schema'
+import { db } from '@/server/db/connection'
+import { evaluations } from '@/server/db/schema'
 
 export const createEvaluation = new Elysia().use(authentication).post(
   '/evaluations',

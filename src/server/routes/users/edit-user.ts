@@ -1,6 +1,6 @@
-import { findUserByEmail, findUserById, updateUser } from '@/db/queries'
+import { findUserByEmail, findUserById, updateUser } from '@/server/db/queries'
 import { ZodError } from 'zod'
-import { IUserType } from '@/db/schema'
+import { IUserType } from '@/server/db/schema'
 import bcrypt from 'bcryptjs'
 import { removeProperty } from '@/utils/remove-properties'
 import { validate_id } from '@/utils/validations/validate-id'

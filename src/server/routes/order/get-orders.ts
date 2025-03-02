@@ -1,9 +1,9 @@
 import Elysia, { t } from 'elysia'
-import { orders, users } from '@/db/schema'
-import { db } from '@/db/connection'
+import { orders, users } from '@/server/db/schema'
+import { db } from '@/server/db/connection'
 import { eq, and, ilike, desc, count, sql } from 'drizzle-orm'
 import { createSelectSchema } from 'drizzle-typebox'
-import { authentication } from '../middlewares/authentication'
+import { authentication } from '../../middlewares/authentication'
 
 export const getOrders = new Elysia().use(authentication).get(
   '/orders',

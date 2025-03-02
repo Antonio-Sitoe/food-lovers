@@ -1,5 +1,5 @@
-import { restaurants, users } from '@/db/schema'
-import { db } from '@/db/connection'
+import { restaurants, users } from '@/server/db/schema'
+import { db } from '@/server/db/connection'
 import Elysia, { t } from 'elysia'
 
 export const registerRestaurant = new Elysia().post(
@@ -31,5 +31,5 @@ export const registerRestaurant = new Elysia().post(
       phone: t.String(),
       email: t.String({ format: 'email' }),
     }),
-  },
+  }
 )

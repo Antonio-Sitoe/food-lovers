@@ -1,4 +1,4 @@
-import { IUserType } from '@/db/schema'
+import { IUserType } from '@/server/db/schema'
 import type { JwtVariables } from 'hono/jwt'
 import { z } from 'zod'
 

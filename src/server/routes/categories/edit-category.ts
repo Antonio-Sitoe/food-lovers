@@ -1,5 +1,5 @@
 import { GetNextApiResponseParams } from '@/@types/params'
-import { update_category_on_db, get_category_by_id } from '@/db/queries'
+import { update_category_on_db, get_category_by_id } from '@/server/db/queries'
 import { API_RESPONSE } from '@/utils/api-response'
 import { category_schema } from '@/utils/validations/create-category'
 import { ZodError } from 'zod'

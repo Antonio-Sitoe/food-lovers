@@ -1,5 +1,5 @@
 import { GetNextApiResponseParams } from '@/@types/params'
-import { get_product_by_id } from '@/db/queries'
+import { get_product_by_id } from '@/server/db/queries'
 import { API_RESPONSE } from '@/utils/api-response'
 import { NextRequest } from 'next/server'
 

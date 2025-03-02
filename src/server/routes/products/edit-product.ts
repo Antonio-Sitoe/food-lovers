@@ -3,7 +3,7 @@ import {
   get_category_by_id,
   get_product_by_id,
   update_product_on_db,
-} from '@/db/queries'
+} from '@/server/db/queries'
 import { API_RESPONSE } from '@/utils/api-response'
 import { productsSchema } from '@/utils/validations/products'
 import { ZodError } from 'zod'

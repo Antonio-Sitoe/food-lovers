@@ -1,4 +1,4 @@
-import { getUserById } from '@/db/queries'
+import { getUserById } from '@/server/db/queries'
 import { API_RESPONSE } from '@/utils/api-response'
 import { Hono } from 'hono'
 

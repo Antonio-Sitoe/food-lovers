@@ -1,8 +1,8 @@
-import { db } from '@/db/connection'
-import { orders } from '@/db/schema'
+import { db } from '@/server/db/connection'
+import { orders } from '@/server/db/schema'
 import Elysia, { t } from 'elysia'
-import { authentication } from '../middlewares/authentication'
-import { orderItems } from '@/db/schema/order-items'
+import { authentication } from '../../middlewares/authentication'
+import { orderItems } from '@/server/db/schema/order-items'
 
 export const createOrder = new Elysia().use(authentication).post(
   '/restaurants/:restaurantId/orders',

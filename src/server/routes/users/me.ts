@@ -1,4 +1,4 @@
-import { db } from '@/db/connection'
+import { db } from '@/server/db/connection'
 import { Hono } from 'hono'
 import { HonoApp } from '@/@types/Hono-types'
 

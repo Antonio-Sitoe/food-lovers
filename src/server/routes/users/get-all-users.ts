@@ -1,5 +1,5 @@
 import { ENUM_USER_ROLE } from '@/@types/enum-user-role'
-import { list_all_users } from '@/db/queries'
+import { list_all_users } from '@/server/db/queries'
 import { env } from '@/lib/env'
 import { DrizzleError } from 'drizzle-orm'
 import { Hono } from 'hono'

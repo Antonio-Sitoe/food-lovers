@@ -1,8 +1,8 @@
 import Elysia, { t } from 'elysia'
 import dayjs from 'dayjs'
 import { authentication } from '../../middlewares/authentication'
-import { db } from '@/db/connection'
-import { authLinks } from '@/db/schema'
+import { db } from '@/server/db/connection'
+import { authLinks } from '@/server/db/schema'
 import { eq } from 'drizzle-orm'
 import { UnauthorizedError } from './errors/unauthorized-error'
 

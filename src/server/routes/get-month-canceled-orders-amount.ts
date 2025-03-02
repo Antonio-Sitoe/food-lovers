@@ -2,8 +2,8 @@ import Elysia from 'elysia'
 import { authentication } from '../middlewares/authentication'
 import { and, count, eq, gte, sql } from 'drizzle-orm'
 import dayjs from 'dayjs'
-import { db } from '@/db/connection'
-import { orders } from '@/db/schema'
+import { db } from '@/server/db/connection'
+import { orders } from '@/server/db/schema'
 
 export const getMonthCanceledOrdersAmount = new Elysia()
   .use(authentication)

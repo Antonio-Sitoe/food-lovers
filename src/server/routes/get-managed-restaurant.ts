@@ -1,6 +1,6 @@
 import Elysia from 'elysia'
 import { authentication } from '../middlewares/authentication'
-import { db } from '@/db/connection'
+import { db } from '@/server/db/connection'
 
 export const getManagedRestaurant = new Elysia()
   .use(authentication)
