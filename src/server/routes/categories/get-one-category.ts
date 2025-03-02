@@ -1,24 +1,20 @@
-import { GetNextApiResponseParams } from '@/@types/params'
 import { get_category_by_id } from '@/server/db/queries'
-import { API_RESPONSE } from '@/utils/api-response'
-import { NextRequest } from 'next/server'
+import { validate_id } from '@/utils/validations/validate-id'
+import { Hono } from 'hono'
 
-export async function get_one_category(
-  _: NextRequest,
-  replay: GetNextApiResponseParams
-) {
-  const id = (await replay.params).id
-
-  const category = await get_category_by_id(id)
-
-  if (!category) {
-    return API_RESPONSE('Category not found', 404)
+export const getOneCategory = new Hono().get(
+  '/categories/:id',
+  async ({ req, json }) => {
+    const { id } = validate_id.parse(req.param)
+    const category = await get_category_by_id(id)
+    if (!category) {
+      return json('Category not found', 404)
+    }
+    return json(
+      {
+        category,
+      },
+      200
+    )
   }
-
-  return API_RESPONSE(
-    {
-      category,
-    },
-    200
-  )
-}
+)

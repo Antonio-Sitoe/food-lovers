@@ -29,6 +29,7 @@ export const authentication = new Hono<HonoApp>().use('*', async (c, next) => {
       maxAge: 7 * 86400, // 7 dias
       path: '/',
     })
+    return { token }
   })
   c.set('signOut', () => {
     deleteCookie(c, 'auth')
@@ -36,8 +37,14 @@ export const authentication = new Hono<HonoApp>().use('*', async (c, next) => {
   await next()
 })
 
-export const jwtConfig = authentication.use(
-  jwt({
-    secret: env.JWT_SECRET_KEY,
+export const jwtConfig = new Hono<HonoApp>()
+  .use(
+    jwt({
+      secret: env.JWT_SECRET_KEY,
+    })
+  )
+  .use('*', async (c, next) => {
+    const token = await c.get('getCurrentUser')()
+    console.log('token', token)
+    return next()
   })
-)

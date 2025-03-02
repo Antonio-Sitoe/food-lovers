@@ -1,14 +1,24 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
-import { createUser, editUser, getAllUsers, getOneUser } from './routes/users'
-import { login } from './routes/authentication/sign-in'
-import { authentication, jwtConfig } from './middlewares/authentication'
-import { UnauthorizedError } from './routes/authentication/errors/unauthorized-error'
-import { NotAManagerError } from './routes/authentication/errors/not-a-manager-error'
-import { ZodError } from 'zod'
-import { InvalidCredencialError } from './routes/authentication/errors/invalid-credencials-error'
 
-export const app = new Hono().basePath('/api')
+import { login } from './routes/authentication/sign-in'
+import { ZodError } from 'zod'
+import { NotAManagerError } from './routes/authentication/errors/not-a-manager-error'
+import { UnauthorizedError } from './routes/authentication/errors/unauthorized-error'
+import { InvalidCredencialError } from './routes/authentication/errors/invalid-credencials-error'
+import {
+  createCategory,
+  deleteCategory,
+  getAllCategories,
+  getOneCategory,
+  updateCategory,
+} from './routes/categories'
+import { createUser, getAllUsers, getOneUser, editUser } from './routes/users'
+import { signOut } from './routes/authentication/sign-out'
+import { authentication, jwtConfig } from './middlewares/authentication'
+import { HonoApp } from '@/@types/Hono-types'
+
+export const app = new Hono<HonoApp>().basePath('/api')
 
 app
   .use(
@@ -20,11 +30,17 @@ app
   .notFound((c) => c.json({ error: 'Not Found' }, 404))
   .route('/', authentication)
   .route('/', login)
+  .route('/', signOut)
   .route('/', jwtConfig)
   .route('/', createUser)
   .route('/', getAllUsers)
   .route('/', getOneUser)
   .route('/', editUser)
+  .route('/', createCategory)
+  .route('/', deleteCategory)
+  .route('/', getAllCategories)
+  .route('/', getOneCategory)
+  .route('/', updateCategory)
   .onError((error, { json }) => {
     if (error instanceof UnauthorizedError) {
       return json({ message: error.message }, 401)
@@ -35,6 +51,6 @@ app
     } else if (error instanceof InvalidCredencialError) {
       return json({ error: error.message }, 401)
     }
-    console.log('ss', error)
-    return json({ error }, 500)
+    console.log('ss', error.message)
+    return json({ error, message: error.message }, 500)
   })

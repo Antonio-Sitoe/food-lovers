@@ -28,11 +28,12 @@ export const login = new Hono<HonoApp>().post(
 
     if (!does_password_matches) throw new InvalidCredencialError()
 
-    await get('signUser')({ sub: user.id })
+    const { token } = await get('signUser')({ sub: user.id })
 
     return json({
       message: 'Logado com sucesso',
       user: removeProperty(user, ['isDeleted', 'password']),
+      token,
     })
   }
 )

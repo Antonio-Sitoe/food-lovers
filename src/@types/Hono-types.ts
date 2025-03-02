@@ -8,7 +8,9 @@ export const jwtPayloadSchema = z.object({
 
 type Variables = JwtVariables & {
   getCurrentUser: () => Promise<IUserType>
-  signUser: (payload: z.infer<typeof jwtPayloadSchema>) => Promise<void>
+  signUser: (
+    payload: z.infer<typeof jwtPayloadSchema>
+  ) => Promise<{ token: string }>
   signOut: () => void
 }
 

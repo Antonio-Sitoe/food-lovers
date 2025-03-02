@@ -1,8 +1,10 @@
-import Elysia from 'elysia'
-import { authentication } from '../../middlewares/authentication'
+import { HonoApp } from '@/@types/Hono-types'
+import { Hono } from 'hono'
 
-export const signOut = new Elysia()
-  .use(authentication)
-  .post('/sign-out', async ({ signOut }) => {
+export const signOut = new Hono<HonoApp>().post(
+  '/sign-out',
+  async ({ get }) => {
+    const signOut = get('signOut')
     signOut()
-  })
+  }
+)
