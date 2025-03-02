@@ -1,24 +1,20 @@
-import { GetNextApiResponseParams } from '@/@types/params'
 import { get_product_by_id } from '@/server/db/queries'
-import { API_RESPONSE } from '@/utils/api-response'
-import { NextRequest } from 'next/server'
+import { validate_id } from '@/utils/validations/validate-id'
+import { Hono } from 'hono'
 
-export async function get_one_product(
-  _: NextRequest,
-  replay: GetNextApiResponseParams
-) {
-  const id = (await replay.params).id
-
-  const product = await get_product_by_id({ id })
-
-  if (!product) {
-    return API_RESPONSE('Product not found', 404)
+export const getOneProduct = new Hono().get(
+  '/products/:id',
+  async ({ req, json }) => {
+    const { id } = validate_id.parse(req.param)
+    const product = await get_product_by_id({ id })
+    if (!product) {
+      return json('Product not found', 404)
+    }
+    return json(
+      {
+        product,
+      },
+      200
+    )
   }
-
-  return API_RESPONSE(
-    {
-      product,
-    },
-    200
-  )
-}
+)

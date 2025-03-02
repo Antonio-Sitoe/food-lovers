@@ -17,6 +17,13 @@ import { createUser, getAllUsers, getOneUser, editUser } from './routes/users'
 import { signOut } from './routes/authentication/sign-out'
 import { authentication, jwtConfig } from './middlewares/authentication'
 import { HonoApp } from '@/@types/Hono-types'
+import {
+  createProducts,
+  deletProducts,
+  getAllProducts,
+  getOneProduct,
+  updateProduct,
+} from './routes/products'
 
 export const app = new Hono<HonoApp>().basePath('/api')
 
@@ -41,6 +48,11 @@ app
   .route('/', getAllCategories)
   .route('/', getOneCategory)
   .route('/', updateCategory)
+  .route('/', createProducts)
+  .route('/', deletProducts)
+  .route('/', updateProduct)
+  .route('/', getOneProduct)
+  .route('/', getAllProducts)
   .onError((error, { json }) => {
     if (error instanceof UnauthorizedError) {
       return json({ message: error.message }, 401)
