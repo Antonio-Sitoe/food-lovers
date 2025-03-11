@@ -4,7 +4,7 @@ import { validate_id } from '@/utils/validations/validate-id'
 import { Hono } from 'hono'
 import { ZodError } from 'zod'
 
-export const deletProducts = new Hono<HonoApp>().delete(
+export const deleteProducts = new Hono<HonoApp>().delete(
   '/products/:id',
   async ({ json, req }) => {
     try {

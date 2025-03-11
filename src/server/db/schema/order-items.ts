@@ -16,7 +16,6 @@ export const orderItems = pgTable('order_items', {
     onDelete: 'set null',
   }),
   quantity: integer('quantity').default(1),
-  priceInCents: integer('price_in_cents').notNull(),
 })
 
 export const orderItemsRelations = relations(orderItems, ({ one }) => ({

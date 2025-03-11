@@ -1,21 +1,16 @@
-import Elysia, { t } from 'elysia'
-import { orders, users } from '@/server/db/schema'
 import { db } from '@/server/db/connection'
+import { Hono } from 'hono'
+import { HonoApp } from '@/@types/Hono-types'
+import { orders, users } from '@/server/db/schema'
 import { eq, and, ilike, desc, count, sql } from 'drizzle-orm'
-import { createSelectSchema } from 'drizzle-typebox'
-import { authentication } from '../../middlewares/authentication'
+import { getOrderSchema } from '@/utils/validations/get-order'
 
-export const getOrders = new Elysia().use(authentication).get(
+export const getOrders = new Hono<HonoApp>().get(
   '/orders',
-  async ({ query, getCurrentUser, set }) => {
-    const { pageIndex, orderId, customerName, status } = query
-    const { restaurantId } = await getCurrentUser()
-
-    if (!restaurantId) {
-      set.status = 401
-
-      throw new Error('User is not a restaurant manager.')
-    }
+  async ({ req, json }) => {
+    const { pageIndex, orderId, customerName, status } = getOrderSchema.parse(
+      req.param()
+    )
 
     const baseQuery = db
       .select({
@@ -29,7 +24,6 @@ export const getOrders = new Elysia().use(authentication).get(
       .innerJoin(users, eq(users.id, orders.customerId))
       .where(
         and(
-          eq(orders.restaurantId, restaurantId),
           orderId ? ilike(orders.id, `%${orderId}%`) : undefined,
           status ? eq(orders.status, status) : undefined,
           customerName ? ilike(users.name, `%${customerName}%`) : undefined
@@ -65,14 +59,6 @@ export const getOrders = new Elysia().use(authentication).get(
       },
     }
 
-    return result
-  },
-  {
-    query: t.Object({
-      customerName: t.Optional(t.String()),
-      orderId: t.Optional(t.String()),
-      status: t.Optional(createSelectSchema(orders).properties.status),
-      pageIndex: t.Numeric({ minimum: 0 }),
-    }),
+    return json(result)
   }
 )

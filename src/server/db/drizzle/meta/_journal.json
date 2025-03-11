@@ -57,6 +57,13 @@
       "when": 1739712612962,
       "tag": "0007_large_thunderbolts",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1741512685263,
+      "tag": "0008_chemical_firelord",
+      "breakpoints": true
     }
   ]
 }

@@ -1,83 +1,79 @@
 import { db } from '@/server/db/connection'
 import { orders } from '@/server/db/schema'
-import Elysia, { t } from 'elysia'
-import { authentication } from '../../middlewares/authentication'
 import { orderItems } from '@/server/db/schema/order-items'
+import { Hono } from 'hono'
+import { HonoApp } from '@/@types/Hono-types'
+import { ZodError } from 'zod'
+import { create_orders_schema } from '@/utils/validations/create-order'
 
-export const createOrder = new Elysia().use(authentication).post(
-  '/restaurants/:restaurantId/orders',
-  async ({ params, body, getCurrentUser, set }) => {
-    const { sub: customerId } = await getCurrentUser()
-    const { restaurantId } = params
-    const { items } = body
+export const CreateOrders = new Hono<HonoApp>().post(
+  '/orders',
+  async ({ json, get, req }) => {
+    try {
+      const currentUser = await get('getCurrentUser')()
 
-    const productsIds = items.map((item) => item.productId)
+      if (!currentUser || !currentUser.id) {
+        throw new Error('User not authenticated')
+      }
+      const customerId = currentUser.id
+      const { products } = create_orders_schema.parse(await req.json())
 
-    const products = await db.query.products.findMany({
-      where(fields, { eq, and, inArray }) {
-        return and(
-          eq(fields.restaurantId, restaurantId),
-          inArray(fields.id, productsIds)
+      const productIds = products.map((item) => item.productId)
+
+      const productsList = await db.query.products.findMany({
+        where: (fields, { inArray }) => inArray(fields.id, productIds),
+      })
+      let totalInCents = 0
+      const orderProducts = products.map((item) => {
+        const productItem = productsList.find(
+          (product) => product.id === item.productId
         )
-      },
-    })
+        if (!productItem) {
+          throw new Error('Produto não encontrado.')
+        }
+        const price = item.quantity * productItem.price
+        totalInCents += price
 
-    const orderProducts = items.map((item) => {
-      const product = products.find((product) => product.id === item.productId)
+        return {
+          productId: item.productId,
+          unitPriceInCents: productItem.price,
+          quantity: item.quantity,
+          subtotalInCents: item.quantity * productItem.price,
+        }
+      })
 
-      if (!product) {
-        throw new Error('Not all products are available in this restaurant.')
+      await db.transaction(async (tx) => {
+        const [order] = await tx
+          .insert(orders)
+          .values({
+            totalInCents,
+            customerId,
+            createdAt: new Date(),
+            status: 'pending',
+          })
+          .returning({
+            id: orders.id,
+          })
+
+        await tx.insert(orderItems).values(
+          orderProducts.map((orderProduct) => {
+            return {
+              orderId: order.id,
+              productId: orderProduct.productId,
+              priceInCents: orderProduct.unitPriceInCents,
+              quantity: orderProduct.quantity,
+            }
+          })
+        )
+      })
+
+      return json({ message: 'Pedido criado!' })
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return json({ error: error }, 400)
       }
 
-      return {
-        productId: item.productId,
-        unitPriceInCents: product.priceInCents,
-        quantity: item.quantity,
-        subtotalInCents: item.quantity * product.priceInCents,
-      }
-    })
-
-    const totalInCents = orderProducts.reduce((total, orderItem) => {
-      return total + orderItem.subtotalInCents
-    }, 0)
-
-    await db.transaction(async (tx) => {
-      const [order] = await tx
-        .insert(orders)
-        .values({
-          totalInCents,
-          customerId,
-          restaurantId,
-        })
-        .returning({
-          id: orders.id,
-        })
-
-      await tx.insert(orderItems).values(
-        orderProducts.map((orderProduct) => {
-          return {
-            orderId: order.id,
-            productId: orderProduct.productId,
-            priceInCents: orderProduct.unitPriceInCents,
-            quantity: orderProduct.quantity,
-          }
-        })
-      )
-    })
-
-    set.status = 201
-  },
-  {
-    body: t.Object({
-      items: t.Array(
-        t.Object({
-          productId: t.String(),
-          quantity: t.Integer(),
-        })
-      ),
-    }),
-    params: t.Object({
-      restaurantId: t.String(),
-    }),
+      return json({ error: (error as Error)?.message || error }, 500)
+    }
   }
 )

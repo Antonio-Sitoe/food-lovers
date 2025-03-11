@@ -18,7 +18,7 @@ export const orders = pgTable('orders', {
     .primaryKey(),
   customerId: text('customer_id')
     .references(() => users.id, {
-      onDelete: 'set null',
+      onDelete: 'cascade',
     })
     .notNull(),
 

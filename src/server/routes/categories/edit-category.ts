@@ -1,8 +1,8 @@
 import { update_category_on_db, get_category_by_id } from '@/server/db/queries'
 import { category_schema } from '@/utils/validations/create-category'
+import { validate_id } from '@/utils/validations/validate-id'
 import { Hono } from 'hono'
 import { ZodError } from 'zod'
-import { validate_id } from '../../../utils/validations/validate-id'
 
 export const updateCategory = new Hono().patch(
   '/categories/:id',
