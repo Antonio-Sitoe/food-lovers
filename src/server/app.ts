@@ -7,8 +7,6 @@ import { NotAManagerError } from './routes/authentication/errors/not-a-manager-e
 import { UnauthorizedError } from './routes/authentication/errors/unauthorized-error'
 import { InvalidCredentialsError } from './routes/authentication/errors/invalid-credencials-error'
 
-import { CreateOrders } from './routes/order/create-order'
-
 import {
   createUser,
   getAllUsers,
@@ -20,6 +18,25 @@ import {
 
 import { authentication, jwtConfig } from './middlewares/authentication'
 import { HonoApp } from '@/@types/Hono-types'
+
+import {
+  CreateOrders,
+  approveOrder,
+  cancelOrder,
+  deliverOrder,
+  dispatchOrder,
+  getOrderDetails,
+  getOrders,
+} from './routes/order'
+
+import {
+  getDailyReceiptInPeriod,
+  getDayOrdersAmount,
+  getMonthCanceledOrdersAmount,
+  getMonthOrdersAmount,
+  getMonthReceipt,
+  getPopularProducts,
+} from './routes/reports'
 
 import {
   createCategory,
@@ -68,6 +85,18 @@ app
   .route('/', getOneProduct)
   .route('/', getAllProducts)
   .route('/', CreateOrders)
+  .route('/', getDailyReceiptInPeriod)
+  .route('/', getDayOrdersAmount)
+  .route('/', getMonthCanceledOrdersAmount)
+  .route('/', getMonthOrdersAmount)
+  .route('/', getMonthReceipt)
+  .route('/', getPopularProducts)
+  .route('/', approveOrder)
+  .route('/', cancelOrder)
+  .route('/', deliverOrder)
+  .route('/', dispatchOrder)
+  .route('/', getOrderDetails)
+  .route('/', getOrders)
   .onError((error, { json }) => {
     if (error instanceof UnauthorizedError) {
       return json({ message: error.message }, 401)

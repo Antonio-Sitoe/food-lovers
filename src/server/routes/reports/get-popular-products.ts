@@ -1,14 +1,12 @@
-import Elysia from 'elysia'
-import { authentication } from '../middlewares/authentication'
-import { and, count, eq } from 'drizzle-orm'
+import { count, eq } from 'drizzle-orm'
 import { db } from '@/server/db/connection'
 import { orderItems, orders, products } from '@/server/db/schema'
+import { HonoApp } from '@/@types/Hono-types'
+import { Hono } from 'hono'
 
-export const getPopularProducts = new Elysia()
-  .use(authentication)
-  .get('/metrics/popular-products', async ({ getManagedRestaurantId }) => {
-    const restaurantId = await getManagedRestaurantId()
-
+export const getPopularProducts = new Hono<HonoApp>().get(
+  '/metrics/popular-products',
+  async ({ json }) => {
     try {
       const popularProducts = await db
         .select({
@@ -18,12 +16,12 @@ export const getPopularProducts = new Elysia()
         .from(orderItems)
         .leftJoin(orders, eq(orders.id, orderItems.orderId))
         .leftJoin(products, eq(products.id, orderItems.productId))
-        .where(and(eq(orders.restaurantId, restaurantId)))
         .groupBy(products.name)
         .limit(5)
 
-      return popularProducts
+      return json(popularProducts)
     } catch (err) {
       console.log(err)
     }
-  })
+  }
+)

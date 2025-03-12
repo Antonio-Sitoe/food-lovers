@@ -1,15 +1,12 @@
-import Elysia from 'elysia'
-import { authentication } from '../middlewares/authentication'
-import { and, count, eq, gte, sql } from 'drizzle-orm'
+import { and, count, gte, sql } from 'drizzle-orm'
 import dayjs from 'dayjs'
 import { db } from '@/server/db/connection'
 import { orders } from '@/server/db/schema'
+import { Hono } from 'hono'
 
-export const getMonthOrdersAmount = new Elysia()
-  .use(authentication)
-  .get('/metrics/month-orders-amount', async ({ getManagedRestaurantId }) => {
-    const restaurantId = await getManagedRestaurantId()
-
+export const getMonthOrdersAmount = new Hono().get(
+  '/metrics/month-orders-amount',
+  async ({ json }) => {
     const today = dayjs()
     const lastMonth = today.subtract(1, 'month')
     const startOfLastMonth = lastMonth.startOf('month')
@@ -26,12 +23,7 @@ export const getMonthOrdersAmount = new Elysia()
         amount: count(orders.id),
       })
       .from(orders)
-      .where(
-        and(
-          eq(orders.restaurantId, restaurantId),
-          gte(orders.createdAt, startOfLastMonth.toDate())
-        )
-      )
+      .where(and(gte(orders.createdAt, startOfLastMonth.toDate())))
       .groupBy(sql`TO_CHAR(${orders.createdAt}, 'YYYY-MM')`)
       .having(({ amount }) => gte(amount, 1))
 
@@ -48,10 +40,11 @@ export const getMonthOrdersAmount = new Elysia()
         ? (currentMonthOrdersAmount.amount * 100) / lastMonthOrdersAmount.amount
         : null
 
-    return {
+    return json({
       amount: currentMonthOrdersAmount?.amount ?? 0,
       diffFromLastMonth: diffFromLastMonth
         ? Number((diffFromLastMonth - 100).toFixed(2))
         : 0,
-    }
-  })
+    })
+  }
+)

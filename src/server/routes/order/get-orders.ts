@@ -9,7 +9,7 @@ export const getOrders = new Hono<HonoApp>().get(
   '/orders',
   async ({ req, json }) => {
     const { pageIndex, orderId, customerName, status } = getOrderSchema.parse(
-      req.param()
+      req.query()
     )
 
     const baseQuery = db

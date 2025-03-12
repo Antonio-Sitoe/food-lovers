@@ -1,13 +1,6 @@
 /* eslint-disable drizzle/enforce-delete-with-where */
 
-import {
-  authLinks,
-  evaluations,
-  orders,
-  products,
-  restaurants,
-  users,
-} from './schema'
+import { authLinks, orders, products, users } from './schema'
 import { faker } from '@faker-js/faker'
 import { db } from './connection'
 import chalk from 'chalk'
@@ -19,9 +12,9 @@ import { createId } from '@paralleldrive/cuid2'
  */
 await db.delete(orderItems)
 await db.delete(orders)
-await db.delete(evaluations)
+
 await db.delete(products)
-await db.delete(restaurants)
+
 await db.delete(authLinks)
 await db.delete(users)
 
