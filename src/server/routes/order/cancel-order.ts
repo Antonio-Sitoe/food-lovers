@@ -1,43 +1,32 @@
-import Elysia, { t } from 'elysia'
-import { authentication } from '../../middlewares/authentication'
+import { HonoApp } from '@/@types/Hono-types'
 import { db } from '@/server/db/connection'
 import { orders } from '@/server/db/schema'
 import { eq } from 'drizzle-orm'
+import { Hono } from 'hono'
 
-export const cancelOrder = new Elysia().use(authentication).patch(
+export const cancelOrder = new Hono<HonoApp>().patch(
   '/orders/:id/cancel',
-  async ({ getCurrentUser, set, params }) => {
-    const { id: orderId } = params
-    const { restaurantId } = await getCurrentUser()
-
-    if (!restaurantId) {
-      set.status = 401
-
-      throw new Error('User is not a restaurant manager.')
-    }
+  async ({ req, json }) => {
+    const { id: orderId } = req.param()
 
     const order = await db.query.orders.findFirst({
       where(fields, { eq, and }) {
-        return and(
-          eq(fields.id, orderId),
-          eq(fields.restaurantId, restaurantId)
-        )
+        return and(eq(fields.id, orderId))
       },
     })
 
     if (!order) {
-      set.status = 401
-
-      throw new Error('Order not found under the user managed restaurant.')
+      return json('Order not found under the user managed restaurant.', 401)
     }
 
     if (!['pending', 'processing'].includes(order.status)) {
-      set.status = 400
-
-      return {
-        code: 'STATUS_NOT_VALID',
-        message: 'O pedido não pode ser cancelado depois de ser enviado.',
-      }
+      return json(
+        {
+          code: 'STATUS_NOT_VALID',
+          message: 'O pedido não pode ser cancelado depois de ser enviado.',
+        },
+        400
+      )
     }
 
     await db
@@ -47,11 +36,6 @@ export const cancelOrder = new Elysia().use(authentication).patch(
       })
       .where(eq(orders.id, orderId))
 
-    set.status = 204
-  },
-  {
-    params: t.Object({
-      id: t.String(),
-    }),
+    return json('Order cancelled')
   }
 )

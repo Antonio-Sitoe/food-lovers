@@ -1,22 +1,17 @@
-import Elysia, { t } from 'elysia'
-import { authentication } from '../../middlewares/authentication'
 import { db } from '@/server/db/connection'
 import { orders } from '@/server/db/schema'
 import { eq } from 'drizzle-orm'
 import { UnauthorizedError } from '../authentication/errors/unauthorized-error'
+import { Hono } from 'hono'
 
-export const approveOrder = new Elysia().use(authentication).patch(
+export const approveOrder = new Hono().patch(
   '/orders/:id/approve',
-  async ({ getManagedRestaurantId, set, params }) => {
-    const { id: orderId } = params
-    const restaurantId = await getManagedRestaurantId()
+  async ({ json, req }) => {
+    const { id: orderId } = req.param()
 
     const order = await db.query.orders.findFirst({
       where(fields, { eq, and }) {
-        return and(
-          eq(fields.id, orderId),
-          eq(fields.restaurantId, restaurantId)
-        )
+        return and(eq(fields.id, orderId))
       },
     })
 
@@ -25,9 +20,7 @@ export const approveOrder = new Elysia().use(authentication).patch(
     }
 
     if (order.status !== 'pending') {
-      set.status = 400
-
-      return { message: 'Order was already approved before.' }
+      return json({ message: 'Order was already approved before.' }, 400)
     }
 
     await db
@@ -37,11 +30,6 @@ export const approveOrder = new Elysia().use(authentication).patch(
       })
       .where(eq(orders.id, orderId))
 
-    set.status = 204
-  },
-  {
-    params: t.Object({
-      id: t.String(),
-    }),
+    return json('Order Approved')
   }
 )

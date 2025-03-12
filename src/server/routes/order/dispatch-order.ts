@@ -1,22 +1,18 @@
-import Elysia, { t } from 'elysia'
-import { authentication } from '../../middlewares/authentication'
 import { db } from '@/server/db/connection'
 import { orders } from '@/server/db/schema'
 import { eq } from 'drizzle-orm'
 import { UnauthorizedError } from '../authentication/errors/unauthorized-error'
+import { Hono } from 'hono'
+import { HonoApp } from '@/@types/Hono-types'
 
-export const dispatchOrder = new Elysia().use(authentication).patch(
+export const dispatchOrder = new Hono<HonoApp>().patch(
   '/orders/:id/dispatch',
-  async ({ getManagedRestaurantId, set, params }) => {
-    const { id: orderId } = params
-    const restaurantId = await getManagedRestaurantId()
+  async ({ req, json }) => {
+    const { id: orderId } = req.param()
 
     const order = await db.query.orders.findFirst({
       where(fields, { eq, and }) {
-        return and(
-          eq(fields.id, orderId),
-          eq(fields.restaurantId, restaurantId)
-        )
+        return and(eq(fields.id, orderId))
       },
     })
 
@@ -25,9 +21,7 @@ export const dispatchOrder = new Elysia().use(authentication).patch(
     }
 
     if (order.status !== 'processing') {
-      set.status = 400
-
-      return { message: 'O pedido já foi enviado ao cliente.' }
+      return json({ message: 'O pedido já foi enviado ao cliente.' }, 400)
     }
 
     await db
@@ -36,12 +30,6 @@ export const dispatchOrder = new Elysia().use(authentication).patch(
         status: 'delivering',
       })
       .where(eq(orders.id, orderId))
-
-    set.status = 204
-  },
-  {
-    params: t.Object({
-      id: t.String(),
-    }),
+    return json({ message: 'Success' })
   }
 )

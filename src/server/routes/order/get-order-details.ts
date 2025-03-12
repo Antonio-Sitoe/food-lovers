@@ -1,18 +1,12 @@
-import Elysia, { t } from 'elysia'
-import { authentication } from '../../middlewares/authentication'
 import { db } from '@/server/db/connection'
 import { UnauthorizedError } from '../authentication/errors/unauthorized-error'
-import { NotAManagerError } from '../authentication/errors/not-a-manager-error'
+import { Hono } from 'hono'
+import { HonoApp } from '@/@types/Hono-types'
 
-export const getOrderDetails = new Elysia().use(authentication).get(
+export const getOrderDetails = new Hono<HonoApp>().get(
   '/orders/:id',
-  async ({ getCurrentUser, params }) => {
-    const { id: orderId } = params
-    const { restaurantId } = await getCurrentUser()
-
-    if (!restaurantId) {
-      throw new NotAManagerError()
-    }
+  async ({ req, json }) => {
+    const { id: orderId } = req.param()
 
     const order = await db.query.orders.findFirst({
       columns: {
@@ -32,23 +26,21 @@ export const getOrderDetails = new Elysia().use(authentication).get(
         orderItems: {
           columns: {
             id: true,
-            priceInCents: true,
             quantity: true,
+            productId: true,
           },
           with: {
             product: {
               columns: {
                 name: true,
+                description: true,
               },
             },
           },
         },
       },
       where(fields, { eq, and }) {
-        return and(
-          eq(fields.id, orderId),
-          eq(fields.restaurantId, restaurantId)
-        )
+        return and(eq(fields.id, orderId))
       },
     })
 
@@ -56,11 +48,6 @@ export const getOrderDetails = new Elysia().use(authentication).get(
       throw new UnauthorizedError()
     }
 
-    return order
-  },
-  {
-    params: t.Object({
-      id: t.String(),
-    }),
+    return json(order)
   }
 )
